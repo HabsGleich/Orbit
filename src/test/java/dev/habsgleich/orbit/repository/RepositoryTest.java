@@ -21,10 +21,7 @@ class RepositoryTest {
 
     @BeforeAll
     static void initialize() {
-        Orbit.initialize(
-            RepositoryTest.class.getResourceAsStream("/orbit.properties"),
-            Customer.class
-        );
+        Orbit.initialize(RepositoryTest.class.getResourceAsStream("/orbit.properties"));
     }
 
     @Test
