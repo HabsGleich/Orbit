@@ -23,8 +23,7 @@ dependencies {
     testImplementation("org.projectlombok:lombok:1.18.36")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.36")
 
-    implementation("org.reflections:reflections:0.10.2")
-
+    api("org.reflections:reflections:0.10.2")
     api("org.hibernate:hibernate-core:5.6.15.Final")
     implementation("com.zaxxer:HikariCP:3.4.5")
 

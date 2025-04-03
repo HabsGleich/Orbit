@@ -11,6 +11,8 @@ import org.jetbrains.annotations.ApiStatus;
 import javax.persistence.Entity;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.util.Collection;
 import java.util.Properties;
 import java.util.Set;
 
@@ -34,8 +36,9 @@ public class Orbit {
 
     private SessionFactory sessionFactory;
 
+    @SafeVarargs
     @ApiStatus.Internal
-    private Orbit(Properties props, Class<?>... entities) {
+    private Orbit(Properties props, Collection<URL>... urls) {
         instance = this;
 
         this.properties = props;
@@ -48,16 +51,10 @@ public class Orbit {
 
         this.configuration = config;
 
-        if (entities.length > 0) {
-            for (Class<?> entity : entities) {
-                log.info("Provided Entity '{}' manually, registering in Orbit...", entity.getName());
-            }
-        } else {
-            final Set<Class<?>> entityClasses = ReflectionHelper.scanForAnnotatedClasses(Entity.class);
-            for (Class<?> entityClass : entityClasses) {
-                log.info("Found annotated Entity '{}', registering in Orbit...", entityClass.getName());
-                config.addAnnotatedClass(entityClass);
-            }
+        final Set<Class<?>> entityClasses = new ReflectionHelper(urls).scanForAnnotatedClasses(Entity.class);
+        for (Class<?> entityClass : entityClasses) {
+            log.info("Found annotated Entity '{}', registering in Orbit...", entityClass.getName());
+            config.addAnnotatedClass(entityClass);
         }
 
         this.sessionFactory = config.buildSessionFactory();
@@ -70,8 +67,9 @@ public class Orbit {
      *
      * @param props Properties to initialize Orbit with
      */
-    public static void initialize(Properties props, Class<?>... entities) {
-        new Orbit(props, entities);
+    @SafeVarargs
+    public static void initialize(Properties props, Collection<URL>... urls) {
+        new Orbit(props, urls);
     }
 
     /**
@@ -79,12 +77,13 @@ public class Orbit {
      *
      * @param props InputStream of the properties file to initialize Orbit with
      */
-    public static void initialize(InputStream props, Class<?>... entities) {
+    @SafeVarargs
+    public static void initialize(InputStream props, Collection<URL>... urls) {
         try {
             Properties properties = new Properties();
             properties.load(props);
 
-            initialize(properties, entities);
+            initialize(properties, urls);
         } catch (IOException e) {
             log.error("Could not load orbit.properties file, shutting down...", e);
             System.exit(1);
@@ -98,13 +97,14 @@ public class Orbit {
      * @param user Username to connect to the database
      * @param password Password to connect to the database
      */
-    public static void initialize(String url, String user, String password, Class<?>... entities) {
+    @SafeVarargs
+    public static void initialize(String url, String user, String password, Collection<URL>... urls) {
         Properties props = new Properties();
         props.setProperty(JDBC_URL_PROPERTY_NAME, url);
         props.setProperty(JDBC_USER_PROPERTY_NAME, user);
         props.setProperty(JDBC_PASSWORD_PROPERTY_NAME, password);
 
-        initialize(props, entities);
+        initialize(props, urls);
     }
 
     /**
