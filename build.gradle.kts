@@ -1,5 +1,5 @@
 plugins {
-    id("java")
+    `java-library`
     `maven-publish`
 }
 
@@ -16,7 +16,7 @@ java {
 }
 
 dependencies {
-    implementation("org.jetbrains:annotations:26.0.2")
+    api("org.jetbrains:annotations:26.0.2")
 
     implementation("org.projectlombok:lombok:1.18.36")
     annotationProcessor("org.projectlombok:lombok:1.18.36")
@@ -25,7 +25,7 @@ dependencies {
 
     implementation("org.reflections:reflections:0.10.2")
 
-    implementation("org.hibernate:hibernate-core:5.6.15.Final")
+    api("org.hibernate:hibernate-core:5.6.15.Final")
     implementation("com.zaxxer:HikariCP:3.4.5")
 
     runtimeOnly("org.postgresql:postgresql:42.7.4")
@@ -42,11 +42,17 @@ tasks.test {
 publishing {
     repositories {
         maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/habsgleich/orbit")
+            name = "Nexus"
+            url = uri(
+                if (!version.toString().endsWith("SNAPSHOT")) {
+                    "https://repo.defever.de/repository/maven-releases/"
+                } else {
+                    "https://repo.defever.de/repository/maven-snapshots/"
+                }
+            )
             credentials {
-                username = findProperty("gpr.user") as String?
-                password = findProperty("gpr.key") as String?
+                username = findProperty("nexus.user") as String?
+                password = findProperty("nexus.password") as String?
             }
         }
     }

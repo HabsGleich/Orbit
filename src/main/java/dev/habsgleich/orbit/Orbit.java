@@ -29,11 +29,16 @@ public class Orbit {
     @Getter
     private static Orbit instance;
 
-    private final SessionFactory sessionFactory;
+    private final Properties properties;
+    private Configuration configuration;
+
+    private SessionFactory sessionFactory;
 
     @ApiStatus.Internal
-    private Orbit(Properties props) {
+    private Orbit(Properties props, Class<?>... entities) {
         instance = this;
+
+        this.properties = props;
 
         final long start = System.currentTimeMillis();
         log.info("Initializing Orbit...");
@@ -41,10 +46,18 @@ public class Orbit {
         final Configuration config = new Configuration();
         config.setProperties(props);
 
-        final Set<Class<?>> entityClasses = ReflectionHelper.scanForAnnotatedClasses(Entity.class);
-        for (Class<?> entityClass : entityClasses) {
-            log.info("Found annotated Entity '{}', registering in Orbit...", entityClass.getName());
-            config.addAnnotatedClass(entityClass);
+        this.configuration = config;
+
+        if (entities.length > 0) {
+            for (Class<?> entity : entities) {
+                log.info("Provided Entity '{}' manually, registering in Orbit...", entity.getName());
+            }
+        } else {
+            final Set<Class<?>> entityClasses = ReflectionHelper.scanForAnnotatedClasses(Entity.class);
+            for (Class<?> entityClass : entityClasses) {
+                log.info("Found annotated Entity '{}', registering in Orbit...", entityClass.getName());
+                config.addAnnotatedClass(entityClass);
+            }
         }
 
         this.sessionFactory = config.buildSessionFactory();
@@ -57,8 +70,8 @@ public class Orbit {
      *
      * @param props Properties to initialize Orbit with
      */
-    public static void initialize(Properties props) {
-        new Orbit(props);
+    public static void initialize(Properties props, Class<?>... entities) {
+        new Orbit(props, entities);
     }
 
     /**
@@ -66,12 +79,12 @@ public class Orbit {
      *
      * @param props InputStream of the properties file to initialize Orbit with
      */
-    public static void initialize(InputStream props) {
+    public static void initialize(InputStream props, Class<?>... entities) {
         try {
             Properties properties = new Properties();
             properties.load(props);
 
-            initialize(properties);
+            initialize(properties, entities);
         } catch (IOException e) {
             log.error("Could not load orbit.properties file, shutting down...", e);
             System.exit(1);
@@ -85,13 +98,35 @@ public class Orbit {
      * @param user Username to connect to the database
      * @param password Password to connect to the database
      */
-    public static void initialize(String url, String user, String password) {
+    public static void initialize(String url, String user, String password, Class<?>... entities) {
         Properties props = new Properties();
         props.setProperty(JDBC_URL_PROPERTY_NAME, url);
         props.setProperty(JDBC_USER_PROPERTY_NAME, user);
         props.setProperty(JDBC_PASSWORD_PROPERTY_NAME, password);
 
-        initialize(props);
+        initialize(props, entities);
     }
 
+    /**
+     * Register additional entity classes with Orbit.
+     *
+     * @param entities Entity classes to register
+     */
+    public void registerEntities(Class<?>... entities) {
+        this.configuration = new Configuration();
+        this.configuration.setProperties(this.properties);
+
+        for (Class<?> entity : entities) {
+            if (entity.isAnnotationPresent(Entity.class)) {
+                configuration.addAnnotatedClass(entity);
+                log.info("Registered entity class: {}", entity.getName());
+            } else {
+                throw new IllegalArgumentException("Entity '" + entity.getName() + "' is not annotated with @" + Entity.class.getName());
+            }
+        }
+        if (this.sessionFactory != null && this.sessionFactory.isOpen()) {
+            this.sessionFactory.close();
+        }
+        this.sessionFactory = this.configuration.buildSessionFactory();
+    }
 }
