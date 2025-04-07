@@ -12,9 +12,8 @@ import javax.persistence.Entity;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Collection;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Orbit is a simple and lightweight ORM for Java.
@@ -27,6 +26,8 @@ public class Orbit {
     private static final String JDBC_URL_PROPERTY_NAME = "hibernate.hikari.dataSource.url";
     private static final String JDBC_USER_PROPERTY_NAME = "hibernate.hikari.dataSource.user";
     private static final String JDBC_PASSWORD_PROPERTY_NAME = "hibernate.hikari.dataSource.password";
+
+    private static final Set<Class<?>> ENTITY_CLASSES = new HashSet<>();
 
     @Getter
     private static Orbit instance;
@@ -113,10 +114,12 @@ public class Orbit {
      * @param entities Entity classes to register
      */
     public void registerEntities(Class<?>... entities) {
+        ENTITY_CLASSES.addAll(Arrays.asList(entities));
+
         this.configuration = new Configuration();
         this.configuration.setProperties(this.properties);
 
-        for (Class<?> entity : entities) {
+        for (Class<?> entity : ENTITY_CLASSES) {
             if (entity.isAnnotationPresent(Entity.class)) {
                 configuration.addAnnotatedClass(entity);
                 log.info("Registered entity class: {}", entity.getName());
