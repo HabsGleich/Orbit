@@ -1,8 +1,8 @@
 package dev.habsgleich.orbit.query;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.criteria.Root;
+import org.hibernate.query.criteria.HibernateCriteriaBuilder;
+import org.hibernate.query.criteria.JpaPredicate;
 
 /**
  * A method to make custom predicates for queries.
@@ -17,9 +17,9 @@ public interface CustomQuery<T> {
      * Query method to make custom predicates.
      *
      * @param criteriaBuilder CriteriaBuilder to build the query
-     * @param root Root of the query
+     * @param root            Root of the query
      * @return Predicate to be used in the query
      */
-    Predicate query(CriteriaBuilder criteriaBuilder, Root<T> root);
+    JpaPredicate query(HibernateCriteriaBuilder criteriaBuilder, Root<T> root);
 
 }

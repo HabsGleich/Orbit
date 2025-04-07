@@ -57,7 +57,7 @@ public class Repository<T> {
      */
     public void delete(T entity) {
         this.transactional((session, transaction) -> {
-            session.delete(entity);
+            session.remove(entity);
             return null;
         });
     }

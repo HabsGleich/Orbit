@@ -1,6 +1,7 @@
 package dev.habsgleich.orbit;
 
 import dev.habsgleich.orbit.helper.ReflectionHelper;
+import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -8,12 +9,10 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.jetbrains.annotations.ApiStatus;
 
-import javax.persistence.Entity;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Orbit is a simple and lightweight ORM for Java.

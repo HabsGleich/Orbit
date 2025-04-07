@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.reflections.util.ClasspathHelper;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -14,19 +15,23 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Disabled
 class RepositoryTest {
 
     private static final Repository<Customer> REPOSITORY = Repository.of(Customer.class);
 
     @BeforeAll
     static void initialize() {
-        Orbit.initialize(RepositoryTest.class.getResourceAsStream("/orbit.properties"));
+        System.out.println("Initialize Orbit Test...");
+        Orbit.initialize(
+            RepositoryTest.class.getResourceAsStream("/orbit.properties"),
+            ClasspathHelper.forJavaClassPath()
+        );
     }
 
     @Test
     @Order(1)
     void merge() {
+        System.out.println("Merging...");
         Customer customer = REPOSITORY.merge(
             Customer.builder()
                 .firstName("John")

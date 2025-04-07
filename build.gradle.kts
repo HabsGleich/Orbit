@@ -11,8 +11,9 @@ repositories {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
 }
 
 dependencies {
@@ -24,10 +25,10 @@ dependencies {
     testAnnotationProcessor("org.projectlombok:lombok:1.18.36")
 
     api("org.reflections:reflections:0.10.2")
-    api("org.hibernate:hibernate-core:5.6.15.Final")
-    implementation("com.zaxxer:HikariCP:3.4.5")
+    implementation("org.hibernate.orm:hibernate-hikaricp:6.6.13.Final")
+    implementation("org.hibernate.orm:hibernate-core:6.6.13.Final")
 
-    runtimeOnly("org.postgresql:postgresql:42.7.4")
+    runtimeOnly("org.postgresql:postgresql:42.7.5")
 
     testImplementation("ch.qos.logback:logback-classic:1.2.11")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
