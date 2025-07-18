@@ -1,8 +1,8 @@
 package dev.habsgleich.orbit.customer;
 
+import jakarta.persistence.*;
 import lombok.*;
 
-import javax.persistence.*;
 import java.util.UUID;
 
 @Data

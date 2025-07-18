@@ -1,6 +1,7 @@
 package dev.habsgleich.orbit;
 
 import dev.habsgleich.orbit.helper.ReflectionHelper;
+import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -8,11 +9,10 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.jetbrains.annotations.ApiStatus;
 
-import javax.persistence.Entity;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
-import java.util.Set;
+import java.net.URL;
+import java.util.*;
 
 /**
  * Orbit is a simple and lightweight ORM for Java.
@@ -26,14 +26,22 @@ public class Orbit {
     private static final String JDBC_USER_PROPERTY_NAME = "hibernate.hikari.dataSource.user";
     private static final String JDBC_PASSWORD_PROPERTY_NAME = "hibernate.hikari.dataSource.password";
 
+    private static final Set<Class<?>> ENTITY_CLASSES = new HashSet<>();
+
     @Getter
     private static Orbit instance;
 
-    private final SessionFactory sessionFactory;
+    private final Properties properties;
+    private Configuration configuration;
 
+    private SessionFactory sessionFactory;
+
+    @SafeVarargs
     @ApiStatus.Internal
-    private Orbit(Properties props) {
+    private Orbit(Properties props, Collection<URL>... urls) {
         instance = this;
+
+        this.properties = props;
 
         final long start = System.currentTimeMillis();
         log.info("Initializing Orbit...");
@@ -41,7 +49,9 @@ public class Orbit {
         final Configuration config = new Configuration();
         config.setProperties(props);
 
-        final Set<Class<?>> entityClasses = ReflectionHelper.scanForAnnotatedClasses(Entity.class);
+        this.configuration = config;
+
+        final Set<Class<?>> entityClasses = new ReflectionHelper(urls).scanForAnnotatedClasses(Entity.class);
         for (Class<?> entityClass : entityClasses) {
             log.info("Found annotated Entity '{}', registering in Orbit...", entityClass.getName());
             config.addAnnotatedClass(entityClass);
@@ -57,8 +67,9 @@ public class Orbit {
      *
      * @param props Properties to initialize Orbit with
      */
-    public static void initialize(Properties props) {
-        new Orbit(props);
+    @SafeVarargs
+    public static void initialize(Properties props, Collection<URL>... urls) {
+        new Orbit(props, urls);
     }
 
     /**
@@ -66,12 +77,13 @@ public class Orbit {
      *
      * @param props InputStream of the properties file to initialize Orbit with
      */
-    public static void initialize(InputStream props) {
+    @SafeVarargs
+    public static void initialize(InputStream props, Collection<URL>... urls) {
         try {
             Properties properties = new Properties();
             properties.load(props);
 
-            initialize(properties);
+            initialize(properties, urls);
         } catch (IOException e) {
             log.error("Could not load orbit.properties file, shutting down...", e);
             System.exit(1);
@@ -85,13 +97,38 @@ public class Orbit {
      * @param user Username to connect to the database
      * @param password Password to connect to the database
      */
-    public static void initialize(String url, String user, String password) {
+    @SafeVarargs
+    public static void initialize(String url, String user, String password, Collection<URL>... urls) {
         Properties props = new Properties();
         props.setProperty(JDBC_URL_PROPERTY_NAME, url);
         props.setProperty(JDBC_USER_PROPERTY_NAME, user);
         props.setProperty(JDBC_PASSWORD_PROPERTY_NAME, password);
 
-        initialize(props);
+        initialize(props, urls);
     }
 
+    /**
+     * Register additional entity classes with Orbit.
+     *
+     * @param entities Entity classes to register
+     */
+    public void registerEntities(Class<?>... entities) {
+        ENTITY_CLASSES.addAll(Arrays.asList(entities));
+
+        this.configuration = new Configuration();
+        this.configuration.setProperties(this.properties);
+
+        for (Class<?> entity : ENTITY_CLASSES) {
+            if (entity.isAnnotationPresent(Entity.class)) {
+                configuration.addAnnotatedClass(entity);
+                log.info("Registered entity class: {}", entity.getName());
+            } else {
+                throw new IllegalArgumentException("Entity '" + entity.getName() + "' is not annotated with @" + Entity.class.getName());
+            }
+        }
+        if (this.sessionFactory != null && this.sessionFactory.isOpen()) {
+            this.sessionFactory.close();
+        }
+        this.sessionFactory = this.configuration.buildSessionFactory();
+    }
 }

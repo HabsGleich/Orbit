@@ -1,9 +1,13 @@
 package dev.habsgleich.orbit.query;
 
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.criteria.HibernateCriteriaBuilder;
+import org.hibernate.query.criteria.JpaCriteriaQuery;
+import org.hibernate.query.criteria.JpaPredicate;
 
-import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,10 +20,10 @@ import java.util.Optional;
 public class QueryBuilder<T> {
 
     private final List<String> fetchPaths = new ArrayList<>();
-    private final List<Predicate> predicates = new ArrayList<>();
+    private final List<JpaPredicate> predicates = new ArrayList<>();
     private final Session session;
-    private final CriteriaBuilder builder;
-    private final CriteriaQuery<T> criteria;
+    private final HibernateCriteriaBuilder builder;
+    private final JpaCriteriaQuery<T> criteria;
     private final Root<T> root;
 
     public QueryBuilder(SessionFactory sessionFactory, Class<T> entityClass) {
@@ -44,7 +48,7 @@ public class QueryBuilder<T> {
      * Create an equal (=) predicate for the query.
      *
      * @param property field in the entity
-     * @param value value to be compared
+     * @param value    value to be compared
      * @return the fluent builder
      */
     public QueryBuilder<T> equal(String property, Object value) {
@@ -56,7 +60,7 @@ public class QueryBuilder<T> {
      * Create a like predicate for the query.
      *
      * @param property field in the entity
-     * @param value value to be compared
+     * @param value    value to be compared
      * @return the fluent builder
      */
     public QueryBuilder<T> like(String property, String value) {
@@ -68,7 +72,7 @@ public class QueryBuilder<T> {
      * Create a greater than (>) predicate for the query.
      *
      * @param property field in the entity
-     * @param value value to be compared
+     * @param value    value to be compared
      * @return the fluent builder
      */
     public QueryBuilder<T> greaterThan(String property, Number value) {
@@ -80,7 +84,7 @@ public class QueryBuilder<T> {
      * Create a less than (<) predicate for the query.
      *
      * @param property field in the entity
-     * @param value value to be compared
+     * @param value    value to be compared
      * @return the fluent builder
      */
     public QueryBuilder<T> lessThan(String property, Number value) {
@@ -137,7 +141,7 @@ public class QueryBuilder<T> {
 
     private void applyPredicates() {
         if (!predicates.isEmpty()) {
-            criteria.where(builder.and(predicates.toArray(new Predicate[0])));
+            criteria.where(builder.and(predicates.toArray(new JpaPredicate[0])));
         }
     }
 

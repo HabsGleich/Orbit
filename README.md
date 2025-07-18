@@ -1,9 +1,9 @@
 # Orbit
 
-Eine leichtgewichtige, fluent-style Java ORM-Bibliothek für typsichere und elegante Datenbankoperationen.
+Eine fluent-style Java ORM-Bibliothek für typsichere und elegante Datenbankoperationen, basierend auf [Hibernate](https://github.com/hibernate).
 
 ![Java Version](https://img.shields.io/badge/Java-8%2B-blue)
-![License](https://img.shields.io/badge/License-Apache%202.0-blue)
+![License](https://img.shields.io/github/license/habsgleich/orbit)
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
 
 ## Übersicht
@@ -37,7 +37,7 @@ Optional<Customer> customer = Repository.of(Customer.class)
 
 ```kotlin
 dependencies {
-    implementation("dev.habsgleich:orbit:1.0.0")
+    implementation("dev.habsgleich:orbit:<version>")
 }
 ```
 
@@ -279,9 +279,9 @@ Beiträge sind willkommen! Bitte lies zuerst unsere [Beitragsrichtlinien](CONTRI
 
 ## Lizenz
 
-Dieses Projekt steht unter der Apache License 2.0 - siehe die [LICENSE](LICENSE) Datei für Details.
+Dieses Projekt steht unter der MIT License - siehe die [LICENSE](LICENSE) Datei für Details.
 
 ## Dank
 
 - Dank an alle Mitwirkenden und Benutzer, die Feedback geben
-- Basiert auf Hibernate, einem der leistungsstärksten ORM-Frameworks für Java
+- Basiert auf [Hibernate](https://github.com/hibernate), einem der leistungsstärksten ORM-Frameworks für Java
