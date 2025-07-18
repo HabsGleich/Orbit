@@ -28,7 +28,7 @@ dependencies {
     api("org.hibernate.orm:hibernate-core:6.6.13.Final")
     implementation("org.hibernate.orm:hibernate-hikaricp:6.6.13.Final")
 
-    runtimeOnly("org.postgresql:postgresql:42.7.5")
+    runtimeOnly("org.postgresql:postgresql:42.7.7")
 
     testImplementation("ch.qos.logback:logback-classic:1.2.11")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
