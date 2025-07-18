@@ -23,3 +23,6 @@ jobs:
 
       - name: Push artifacts
         run: ./gradlew publish
+        env:
+          REPOSITORY_USERNAME: ${{ secrets.REPOSITORY_USERNAME }}
+          REPOSITORY_PASSWORD: ${{ secrets.REPOSITORY_PASSWORD }}
