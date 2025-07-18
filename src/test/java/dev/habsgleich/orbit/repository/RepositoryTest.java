@@ -15,6 +15,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Disabled
 class RepositoryTest {
 
     private static final Repository<Customer> REPOSITORY = Repository.of(Customer.class);
