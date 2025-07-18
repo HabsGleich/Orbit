@@ -42,17 +42,17 @@ tasks.test {
 publishing {
     repositories {
         maven {
-            name = "Nexus"
+            name = "Repository"
             url = uri(
                 if (!version.toString().endsWith("SNAPSHOT")) {
-                    "https://repo.defever.de/repository/maven-releases/"
+                    "https://maven.defever.de/releases"
                 } else {
-                    "https://repo.defever.de/repository/maven-snapshots/"
+                    "https://maven.defever.de/snapshots"
                 }
             )
             credentials {
-                username = findProperty("nexus.user") as String?
-                password = findProperty("nexus.password") as String?
+                username = System.getenv("REPOSITORY_USERNAME")
+                password = System.getenv("REPOSITORY_PASSWORD")
             }
         }
     }
@@ -61,8 +61,23 @@ publishing {
             from(components["java"])
             pom {
                 name.set("Orbit")
-                description.set("A simple ORM for Java")
+                description.set("A simple ORM for Java based on Hibernate")
                 url.set("https://github.com/habsgleich/orbit")
+
+                developers {
+                    developer {
+                        id.set("habsgleich")
+                        name.set("HabsGleich")
+                        email.set("nick@defever.de")
+                    }
+                }
+
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://opensource.org/license/mit/")
+                    }
+                }
             }
         }
     }
