@@ -19,10 +19,10 @@ java {
 dependencies {
     api("org.jetbrains:annotations:26.0.2")
 
-    implementation("org.projectlombok:lombok:1.18.36")
-    annotationProcessor("org.projectlombok:lombok:1.18.36")
-    testImplementation("org.projectlombok:lombok:1.18.36")
-    testAnnotationProcessor("org.projectlombok:lombok:1.18.36")
+    implementation("org.projectlombok:lombok:1.18.38")
+    annotationProcessor("org.projectlombok:lombok:1.18.38")
+    testImplementation("org.projectlombok:lombok:1.18.38")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.38")
 
     api("org.reflections:reflections:0.10.2")
     api("org.hibernate.orm:hibernate-core:6.6.13.Final")
