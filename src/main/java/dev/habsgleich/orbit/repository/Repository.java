@@ -47,7 +47,7 @@ public class Repository<T> {
      * @return Upserted entity
      */
     public T merge(T entity) {
-        return this.transactional((session, transaction) -> (T) session.merge(entity));
+        return this.transactional((session, transaction) -> session.merge(entity));
     }
 
     /**
