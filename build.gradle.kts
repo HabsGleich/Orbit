@@ -31,7 +31,7 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql:42.7.7")
 
     testImplementation("ch.qos.logback:logback-classic:1.2.11")
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation(platform("org.junit:junit-bom:5.13.3"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
