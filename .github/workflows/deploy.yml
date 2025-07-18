@@ -18,5 +18,8 @@ jobs:
           distribution: 'temurin'
           java-version: 21
 
+      - name: Permit gradlew execution
+        run: chmod +x gradlew
+
       - name: Push artifacts
         run: ./gradlew publish
