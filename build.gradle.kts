@@ -25,8 +25,8 @@ dependencies {
     testAnnotationProcessor("org.projectlombok:lombok:1.18.38")
 
     api("org.reflections:reflections:0.10.2")
-    api("org.hibernate.orm:hibernate-core:6.6.13.Final")
-    implementation("org.hibernate.orm:hibernate-hikaricp:6.6.13.Final")
+    api("org.hibernate.orm:hibernate-core:7.1.2.Final")
+    implementation("org.hibernate.orm:hibernate-hikaricp:7.1.2.Final")
 
     runtimeOnly("org.postgresql:postgresql:42.7.7")
 
