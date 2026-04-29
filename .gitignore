@@ -42,9 +42,4 @@ bin/
 .DS_Store
 
 gradle.properties
-/.idea/.gitignore
-/.idea/dataSources.xml
-/.idea/gradle.xml
-/.idea/material_theme_project_new.xml
-/.idea/misc.xml
-/.idea/vcs.xml
+.idea

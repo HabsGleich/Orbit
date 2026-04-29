@@ -69,7 +69,7 @@ public class QueryBuilder<T> {
     }
 
     /**
-     * Create a greater than (>) predicate for the query.
+     * Create a greater than (&gt;) predicate for the query.
      *
      * @param property field in the entity
      * @param value    value to be compared
@@ -81,7 +81,7 @@ public class QueryBuilder<T> {
     }
 
     /**
-     * Create a less than (<) predicate for the query.
+     * Create a less than (&lt;) predicate for the query.
      *
      * @param property field in the entity
      * @param value    value to be compared

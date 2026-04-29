@@ -1,6 +1,8 @@
 plugins {
     `java-library`
     `maven-publish`
+    signing
+    alias(libs.plugins.nexusPublish)
 }
 
 group = "dev.habsgleich"
@@ -11,28 +13,28 @@ repositories {
 }
 
 java {
+    withSourcesJar()
+    withJavadocJar()
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
 dependencies {
-    api("org.jetbrains:annotations:26.0.2")
+    api(libs.jetbrainsAnnotations)
 
-    implementation("org.projectlombok:lombok:1.18.38")
-    annotationProcessor("org.projectlombok:lombok:1.18.38")
-    testImplementation("org.projectlombok:lombok:1.18.38")
-    testAnnotationProcessor("org.projectlombok:lombok:1.18.38")
+    implementation(libs.lombok)
+    annotationProcessor(libs.lombok)
 
-    api("org.reflections:reflections:0.10.2")
-    api("org.hibernate.orm:hibernate-core:6.6.13.Final")
-    implementation("org.hibernate.orm:hibernate-hikaricp:6.6.13.Final")
+    api(libs.reflections)
+    api(libs.bundles.hibernate)
 
-    runtimeOnly("org.postgresql:postgresql:42.7.7")
+    runtimeOnly(libs.postgresql)
 
-    testImplementation("ch.qos.logback:logback-classic:1.2.11")
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation(libs.lombok)
+    testAnnotationProcessor(libs.lombok)
+    testImplementation(libs.logbackClassic)
+    testImplementation(libs.bundles.junit)
 }
 
 tasks.test {
@@ -40,34 +42,22 @@ tasks.test {
 }
 
 publishing {
-    repositories {
-        maven {
-            name = "Repository"
-            url = uri(
-                if (!version.toString().endsWith("SNAPSHOT")) {
-                    "https://maven.defever.de/releases"
-                } else {
-                    "https://maven.defever.de/snapshots"
-                }
-            )
-            credentials {
-                username = System.getenv("REPOSITORY_USERNAME")
-                password = System.getenv("REPOSITORY_PASSWORD")
-            }
-        }
-    }
     publications {
         create<MavenPublication>("mavenJava") {
+            groupId = "dev.habsgleich"
+            artifactId = "orbit"
+            version = project.version.toString()
+
             from(components["java"])
             pom {
                 name.set("Orbit")
-                description.set("A simple ORM for Java based on Hibernate")
-                url.set("https://github.com/habsgleich/orbit")
+                description.set("A Java Hibernate ORM Data Mapper with a focus on modularity and ease of use.")
+                url.set("https://github.com/HabsGleich/Orbit")
 
                 developers {
                     developer {
-                        id.set("habsgleich")
-                        name.set("HabsGleich")
+                        id.set("HabsGleich")
+                        name.set("Nick Defever")
                         email.set("nick@defever.de")
                     }
                 }
@@ -78,7 +68,41 @@ publishing {
                         url.set("https://opensource.org/license/mit/")
                     }
                 }
+
+                scm {
+                    connection.set("scm:git:git://github.com/HabsGleich/Orbit.git")
+                    developerConnection.set("scm:git:ssh://github.com:HabsGleich/Orbit.git")
+                    url.set("https://github.com/HabsGleich/Orbit")
+                }
             }
         }
     }
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
+
+            username.set(findProperty("ossrhUsername")?.toString() ?: System.getenv("OSSRH_USERNAME"))
+            password.set(findProperty("ossrhPassword")?.toString() ?: System.getenv("OSSRH_PASSWORD"))
+        }
+    }
+    useStaging.set(project.version.toString().endsWith("SNAPSHOT").not())
+}
+
+signing {
+    setRequired {
+        gradle.taskGraph.hasTask("publish") && !version.toString().endsWith("-SNAPSHOT")
+    }
+    sign(publishing.publications["mavenJava"])
+}
+
+tasks.withType<Javadoc> {
+    val opts = options as StandardJavadocDocletOptions
+    opts.encoding = "UTF-8"
+    opts.addStringOption("Xdoclint:none", "-quiet")
+    opts.addStringOption("encoding", "UTF-8")
+    opts.addStringOption("charSet", "UTF-8")
 }

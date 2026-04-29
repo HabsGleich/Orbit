@@ -4,7 +4,8 @@ Eine fluent-style Java ORM-Bibliothek für typsichere und elegante Datenbankoper
 
 ![Java Version](https://img.shields.io/badge/Java-8%2B-blue)
 ![License](https://img.shields.io/github/license/habsgleich/orbit)
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
+![GitHub branch check runs](https://img.shields.io/github/check-runs/habsgleich/orbit/main)
+![Maven Central Version](https://img.shields.io/maven-central/v/dev.habsgleich/orbit)
 
 ## Übersicht
 
@@ -29,7 +30,6 @@ Optional<Customer> customer = Repository.of(Customer.class)
 - **Minimaler Boilerplate**: Generiere weniger Code für häufige Operationen
 - **Einfache Konfiguration**: Schneller Einstieg mit unkomplizierter Einrichtung
 - **Testfreundlich**: In-Memory-Datenbank-Integration für Tests
-- **Leichtgewichtig**: Fokussiert auf das Wesentliche bei minimalen Abhängigkeiten
 
 ## Installation
 

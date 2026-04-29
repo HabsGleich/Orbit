@@ -1,0 +1,30 @@
+[versions]
+
+nexus-publish = "2.0.0"
+lombok = "1.18.38"
+reflections = "0.10.2"
+hibernate = "6.6.13.Final"
+junit = "5.10.0"
+logback = "1.2.11"
+jetbrainsAnnotations = "26.0.2"
+postgresql = "42.7.7"
+
+[libraries]
+
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+reflections = { module = "org.reflections:reflections", version.ref = "reflections" }
+hibernate-core = { module = "org.hibernate:hibernate-core", version.ref = "hibernate" }
+hibernate-hikaricp = { module = "org.hibernate:hibernate-hikaricp", version.ref = "hibernate" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+logbackClassic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+jetbrainsAnnotations = { module = "org.jetbrains:annotations", version.ref = "jetbrainsAnnotations" }
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+
+[bundles]
+
+hibernate = [ "hibernate-core", "hibernate-hikaricp" ]
+junit = [ "junit-jupiter" ]
+
+[plugins]
+
+nexusPublish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus-publish" }
